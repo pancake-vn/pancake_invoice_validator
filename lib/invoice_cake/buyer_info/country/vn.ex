@@ -9,7 +9,7 @@ defmodule InvoiceCake.BuyerInfo.Country.VN do
     field("name", :string, required: true)
     field("id_number", :string, required: true, regex: @id_number_regex)
     field("email", :string, regex: @email_regex)
-    field("address", :string)
+    field("address", :string, required: true)
   end
 
   company do

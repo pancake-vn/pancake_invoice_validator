@@ -5,7 +5,13 @@ defmodule InvoiceCake.BuyerInfoTest do
 
   describe "validate/2 routing" do
     test "defaults to VN" do
-      buyer = %{"is_personal" => true, "name" => "Duy", "id_number" => "079302123456"}
+      buyer = %{
+        "is_personal" => true,
+        "name" => "Duy",
+        "id_number" => "079302123456",
+        "address" => "123 Street"
+      }
+
       assert {:ok, _} = BuyerInfo.validate(buyer)
     end
 
@@ -46,6 +52,7 @@ defmodule InvoiceCake.BuyerInfoTest do
         "is_personal" => true,
         "name" => "Duy",
         "id_number" => "079302123456",
+        "address" => "123 Street",
         "unknown_field" => "should be removed"
       }
 
@@ -54,17 +61,49 @@ defmodule InvoiceCake.BuyerInfoTest do
     end
 
     test "requires name" do
-      buyer = %{"is_personal" => true, "id_number" => "079302123456"}
+      buyer = %{
+        "is_personal" => true,
+        "id_number" => "079302123456",
+        "address" => "123 Street"
+      }
+
       assert {:error, "name is required"} = BuyerInfo.validate(buyer)
     end
 
     test "requires id_number" do
-      buyer = %{"is_personal" => true, "name" => "Duy"}
+      buyer = %{
+        "is_personal" => true,
+        "name" => "Duy",
+        "address" => "123 Street"
+      }
+
       assert {:error, "id_number is required"} = BuyerInfo.validate(buyer)
     end
 
+    test "requires address" do
+      buyer = %{"is_personal" => true, "name" => "Duy", "id_number" => "079302123456"}
+      assert {:error, "address is required"} = BuyerInfo.validate(buyer)
+    end
+
+    test "empty address treated as missing" do
+      buyer = %{
+        "is_personal" => true,
+        "name" => "Duy",
+        "id_number" => "079302123456",
+        "address" => ""
+      }
+
+      assert {:error, "address is required"} = BuyerInfo.validate(buyer)
+    end
+
     test "validates id_number format" do
-      buyer = %{"is_personal" => true, "name" => "Duy", "id_number" => "invalid"}
+      buyer = %{
+        "is_personal" => true,
+        "name" => "Duy",
+        "id_number" => "invalid",
+        "address" => "123 Street"
+      }
+
       assert {:error, "id_number is invalid, regex: " <> _} = BuyerInfo.validate(buyer)
     end
 
@@ -73,6 +112,7 @@ defmodule InvoiceCake.BuyerInfoTest do
         "is_personal" => true,
         "name" => "Duy",
         "id_number" => "079302123456",
+        "address" => "123 Street",
         "email" => "not-an-email"
       }
 
@@ -84,6 +124,7 @@ defmodule InvoiceCake.BuyerInfoTest do
         "is_personal" => true,
         "name" => "Duy",
         "id_number" => "079302123456",
+        "address" => "123 Street",
         "email" => "a@b.com;c@d.com"
       }
 
@@ -95,6 +136,7 @@ defmodule InvoiceCake.BuyerInfoTest do
         "is_personal" => true,
         "name" => "Duy",
         "id_number" => "079302123456",
+        "address" => "123 Street",
         "email" => "a@b.com;c@d.com;e@f.org"
       }
 
@@ -106,6 +148,7 @@ defmodule InvoiceCake.BuyerInfoTest do
         "is_personal" => true,
         "name" => "Duy",
         "id_number" => "079302123456",
+        "address" => "123 Street",
         "email" => "a@b.com;invalid;c@d.com"
       }
 
@@ -117,6 +160,7 @@ defmodule InvoiceCake.BuyerInfoTest do
         "is_personal" => true,
         "name" => "Duy",
         "id_number" => "079302123456",
+        "address" => "123 Street",
         "email" => "a@b.com;"
       }
 
@@ -124,7 +168,13 @@ defmodule InvoiceCake.BuyerInfoTest do
     end
 
     test "optional fields can be omitted" do
-      buyer = %{"is_personal" => true, "name" => "Duy", "id_number" => "079302123456"}
+      buyer = %{
+        "is_personal" => true,
+        "name" => "Duy",
+        "id_number" => "079302123456",
+        "address" => "123 Street"
+      }
+
       assert {:ok, _} = BuyerInfo.validate(buyer)
     end
   end
@@ -211,12 +261,24 @@ defmodule InvoiceCake.BuyerInfoTest do
 
   describe "VN type checking" do
     test "rejects non-string name" do
-      buyer = %{"is_personal" => true, "name" => 123, "id_number" => "079302123456"}
+      buyer = %{
+        "is_personal" => true,
+        "name" => 123,
+        "id_number" => "079302123456",
+        "address" => "123 Street"
+      }
+
       assert {:error, "invalid name type, expected string"} = BuyerInfo.validate(buyer)
     end
 
     test "rejects non-string id_number" do
-      buyer = %{"is_personal" => true, "name" => "Duy", "id_number" => 12345}
+      buyer = %{
+        "is_personal" => true,
+        "name" => "Duy",
+        "id_number" => 12345,
+        "address" => "123 Street"
+      }
+
       assert {:error, "invalid id_number type, expected string"} = BuyerInfo.validate(buyer)
     end
 
@@ -225,6 +287,7 @@ defmodule InvoiceCake.BuyerInfoTest do
         "is_personal" => true,
         "name" => "Duy",
         "id_number" => "079302123456",
+        "address" => "123 Street",
         "email" => 123
       }
 
@@ -273,7 +336,13 @@ defmodule InvoiceCake.BuyerInfoTest do
     end
 
     test "empty string treated as missing for required fields" do
-      buyer = %{"is_personal" => true, "name" => "", "id_number" => "079302123456"}
+      buyer = %{
+        "is_personal" => true,
+        "name" => "",
+        "id_number" => "079302123456",
+        "address" => "123 Street"
+      }
+
       assert {:error, "name is required"} = BuyerInfo.validate(buyer)
     end
 
@@ -282,6 +351,7 @@ defmodule InvoiceCake.BuyerInfoTest do
         "is_personal" => true,
         "name" => "Duy",
         "id_number" => "079302123456",
+        "address" => "123 Street",
         "email" => ""
       }
 
